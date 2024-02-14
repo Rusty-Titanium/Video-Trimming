@@ -1,0 +1,284 @@
+﻿<Window x:Class="Video_Trimming.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Video_Trimming"
+        mc:Ignorable="d"
+        Title="Video Trimming" MinHeight="680" Height="580" MinWidth="800" Width="800" FontSize="18" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded" PreviewKeyDown="Window_PreviewKeyDown">
+
+    <Window.Resources>
+
+        <!-- The SVG paths were really messed up and I couldn't get proper spacing between them evenly so I did the next best thing that should work. 
+        Dumb solution but idc enough to waste more time trying to figure out a proper way to do it.-->
+
+        <Grid x:Key="volumePath" Margin="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width=".6*"/>
+                <ColumnDefinition Width=".1*"/>
+                <ColumnDefinition Width=".4*"/>
+            </Grid.ColumnDefinitions>
+
+            <Path Fill="{StaticResource AREghZyBrush.Foreground.Static}" Grid.Column="0" Stretch="Uniform" Data="M430.06 142.1L252.12 320H48c-26.52 0-48 21.48-48 48v288c0 26.5 21.48 48 48 48h204.12l177.94 177.9c30.06 30.06 81.94 8.94 81.94-33.94V176.04c0-42.92-51.92-63.96-81.94-33.94z"/>
+            <Border Grid.Column="1" Background="Transparent" Width="10000"/>
+            <Path Fill="{StaticResource AREghZyBrush.Foreground.Static}" HorizontalAlignment="Right" Grid.Column="2" Stretch="Uniform" Data="M992 512c0-127.06-64.12-243.88-171.54-312.48-22.38-14.28-52.06-7.64-66.24 14.92s-7.56 52.42 14.82 66.72C848.54 331.94 896 418.22 896 512s-47.46 180.06-126.96 230.84c-22.38 14.28-29 44.14-14.82 66.72 13.02 20.72 42.24 30.28 66.24 14.92C927.88 755.88 992 639.06 992 512z m-283.54-153.74c-23.16-12.66-52.38-4.32-65.22 18.9-12.78 23.22-4.32 52.4 18.9 65.22C687.96 456.56 704 483.26 704 512c0 28.76-16.04 55.44-41.84 69.62-23.22 12.82-31.68 42-18.9 65.22 12.86 23.32 42.1 31.6 65.22 18.9 56.46-31.1 91.54-90 91.54-153.76s-35.08-122.64-91.56-153.72z"/>
+        </Grid>
+
+
+        <Grid x:Key="mutePath" Margin="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width=".6*"/>
+                <ColumnDefinition Width=".1*"/>
+                <ColumnDefinition Width=".4*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Path Fill="Red" Grid.Column="0" Stretch="Uniform" Data="M430.06 142.1L252.12 320H48c-26.52 0-48 21.48-48 48v288c0 26.5 21.48 48 48 48h204.12l177.94 177.9c30.06 30.06 81.94 8.94 81.94-33.94V176.04c0-42.92-51.92-63.96-81.94-33.94z"/>
+            <Border Grid.Column="1" Background="Transparent" Width="10000"/>
+            <Path Fill="Red" HorizontalAlignment="Right" Grid.Column="2" Stretch="Uniform" Data="M923.28 512l91.28-91.28c12.6-12.6 12.6-33.04 0-45.64l-45.64-45.64c-12.6-12.6-33.04-12.6-45.64 0L832 420.72l-91.28-91.28c-12.6-12.6-33.04-12.6-45.64 0l-45.64 45.64c-12.6 12.6-12.6 33.04 0 45.64L740.72 512l-91.26 91.26c-12.6 12.6-12.6 33.04 0 45.64l45.64 45.64c12.6 12.6 33.04 12.6 45.64 0L832 603.28l91.28 91.28c12.6 12.6 33.04 12.6 45.64 0l45.64-45.64c12.6-12.6 12.6-33.04 0-45.64L923.28 512z"/>
+        </Grid>
+
+
+        <Style x:Key="VolumeToggleButton" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Type ToggleButton}}">
+            <Style.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Content" Value="{StaticResource mutePath}"/>
+                </Trigger>
+                <Trigger Property="IsChecked" Value="False">
+                    <Setter Property="Content" Value="{StaticResource volumePath}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Viewbox x:Key="playPath" x:Shared="false">
+            <Path Fill="{StaticResource AREghZyBrush.Foreground.Static}" Stretch="Fill" Data="M8.286 3.407A1.5 1.5 0 0 0 6 4.684v14.632a1.5 1.5 0 0 0 2.286 1.277l11.888-7.316a1.5 1.5 0 0 0 0-2.555L8.286 3.407z"/>
+        </Viewbox>
+        <Viewbox x:Key="pausePath" x:Shared="false">
+            <Path Fill="{StaticResource AREghZyBrush.Foreground.Static}" Stretch="Fill" Data="M14,6v20c0,1.1-0.9,2-2,2H8c-1.1,0-2-0.9-2-2V6c0-1.1,0.9-2,2-2h4C13.1,4,14,4.9,14,6z M24,4h-4 c-1.1,0-2,0.9-2,2v20c0,1.1,0.9,2,2,2h4c1.1,0,2-0.9,2-2V6C26,4.9,25.1,4,24,4z"/>
+        </Viewbox>
+
+
+        <Style x:Key="PlayPauseToggleStyle" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Type ToggleButton}}">
+            <Style.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Content" Value="{StaticResource pausePath}"/>
+                </Trigger>
+                <Trigger Property="IsChecked" Value="False">
+                    <Setter Property="Content" Value="{StaticResource playPath}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+    </Window.Resources>
+
+
+
+    <Grid Background="Black">
+
+        <MediaElement x:Name="mediaElement" LoadedBehavior="Manual" Margin="0 0 0 100" ScrubbingEnabled="True" MediaOpened="Element_MediaOpened" PreviewMouseLeftButtonDown="MediaElement_PreviewMouseDown" MediaEnded="MediaElement_MediaEnded"/>
+
+        <Grid x:Name="playPauseGrid" Width="100" Height="100" Margin="0 0 0 100" IsHitTestVisible="False" Visibility="Hidden">
+            <Ellipse Fill="Black" Opacity="0.7"/>
+            <Grid>
+                <Viewbox x:Name="pauseBox" Child="{StaticResource pausePath}" Opacity="1" RenderTransformOrigin="0.5, 0.5">
+                    <Viewbox.RenderTransform>
+                        <ScaleTransform ScaleX="0.5" ScaleY="0.5"/>
+                    </Viewbox.RenderTransform>
+                </Viewbox>
+                <Viewbox x:Name="playBox" Child="{StaticResource playPath}" Opacity="1" Margin="8 0 0 0" RenderTransformOrigin="0.5, 0.5">
+                    <Viewbox.RenderTransform>
+                        <ScaleTransform ScaleX="0.5" ScaleY="0.5"/>
+                    </Viewbox.RenderTransform>
+                </Viewbox>
+            </Grid>
+        </Grid>
+        
+        
+        <!-- This is the media Controls at the bottom. -->
+        <Border Background="{StaticResource Window.Static.Background}" VerticalAlignment="Bottom" Height="100">
+            <Grid>
+                <ToggleButton x:Name="playPauseToggle" Style="{StaticResource PlayPauseToggleStyle}" Padding="4" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20 0 0 0" Width="50" Height="50" Checked="Play_Click" Unchecked="Pause_Click" IsTabStop="False" Focusable="False"/>
+
+                <Grid Margin="90 0 240 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid VerticalAlignment="Center" Grid.ColumnSpan="3">
+                        <!-- Yes I know this solution is stupid. Yes I know I could of made a Custom control to handle everything properly. No I didn't want to spend a week figuring something that complicated out. -->
+                        <Slider x:Name="mainSlider" VerticalAlignment="Center" Margin="10 0 10 0" Thumb.DragStarted="MainSlider_DragStarted" ValueChanged="MainSlider_ValueChanged" IsMoveToPointEnabled="True" IsSelectionRangeEnabled="True" SelectionStart="{Binding ElementName=leftSlider, Path=Value}" SelectionEnd="{Binding ElementName=rightSlider, Path=Value}" IsTabStop="False" Focusable="False"/>
+                        <Slider x:Name="leftSlider" Style="{StaticResource NoBarThumbSlider}" VerticalAlignment="Center" Margin="0 0 20 0" LargeChange="0" Minimum="0" Thumb.DragDelta="LeftSlider_DragDelta" Thumb.DragCompleted="LeftRightSlider_DragCompleted" IsTabStop="False" Focusable="False"/>
+                        <Slider x:Name="rightSlider" Style="{StaticResource NoBarThumbSlider}" VerticalAlignment="Center" Margin="20 0 0 0" LargeChange="0" Minimum="0" Thumb.DragDelta="RightSlider_DragDelta" Thumb.DragCompleted="LeftRightSlider_DragCompleted" IsTabStop="False" Focusable="False"/>
+                    </Grid>
+
+                    <TextBlock x:Name="currentTimeBlock" Text="00:00.00" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="14 54 0 0"/>
+                    <TextBlock x:Name="totalTimeBlock" Text="00:00.00" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0 54 14 0"/>
+                </Grid>
+
+                <Border Background="{StaticResource Button.Static.Background}" VerticalAlignment="Bottom" HorizontalAlignment="Center" Padding="12 3" CornerRadius="8" Margin="0 0 0 3">
+                    <Border.ToolTip>
+                        <ToolTip Content="Trim Duration" FontSize="16"/>
+                    </Border.ToolTip>
+                    <TextBlock x:Name="clipDurationBlock" Text="00:00.00" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+
+                <ToggleButton x:Name="volumeToggleButton" Style="{StaticResource VolumeToggleButton}" HorizontalAlignment="Right" VerticalAlignment="Center" Width="44" Height="44" Margin="0 0 174 0" Checked="Volume_Checked" Unchecked="Volume_Unchecked" IsTabStop="False" Focusable="False"/>
+                <Slider Name="volumeSlider" Style="{StaticResource NormalThumbSlider}" VerticalAlignment="Center" HorizontalAlignment="Right" ValueChanged="ChangeMediaVolume" IsMoveToPointEnabled="True" Minimum="0" Maximum="1" Value="0.5" Width="110" Margin="0 0 62 0" IsTabStop="False" Focusable="False"/>
+
+                <Button x:Name="Settings" HorizontalContentAlignment="Left" Background="Transparent" HorizontalAlignment="Right" VerticalAlignment="Center" Width="50" Height="50" Margin="0 0 7 0" Click="Settings_Click" IsTabStop="False" Focusable="False">
+                    <Button.Content>
+                        <Viewbox Margin="4">
+                            <Path Fill="{StaticResource AREghZyBrush.Foreground.Static}" Stretch="Fill" Data="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/>
+                        </Viewbox>
+                    </Button.Content>
+                </Button>
+
+            </Grid>
+        </Border>
+        
+        
+        
+        
+        <Grid x:Name="settingsControl" Visibility="Collapsed">
+            <Border Background="Black" Opacity="0.7" PreviewMouseLeftButtonDown="Settings_PreviewMouseLeftButtonDown"/>
+            <Border Background="{StaticResource Window.Static.Background}" Padding="10" VerticalAlignment="Center" CornerRadius="8" Margin="70" MaxWidth="1400">
+
+                <Grid VerticalAlignment="Top">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="60"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="60"/>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="140"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="70"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Label Content="Single File Path:" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0"/>
+                    <TextBox x:Name="singleFilePathBox" VerticalAlignment="Center" Padding="0 2" IsReadOnly="True" Grid.Row="0" Grid.Column="1"/>
+                    <Button HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10 0 0 0" Width="60" Height="60" Padding="10" Grid.Row="0" Grid.Column="2" Click="Single_File_Browse_Click">
+                        <Button.Content>
+                            <Path Fill="White" Stretch="Uniform" Data="M576 272V0H176C149.4 0 128 21.4 128 48v928c0 26.6 21.4 48 48 48h672c26.6 0 48-21.4 48-48V320H624c-26.4 0-48-21.6-48-48z m320-28.2v12.2H640V0h12.2c12.8 0 25 5 34 14l195.8 196c9 9 14 21.2 14 33.8z"/>
+                        </Button.Content>
+                        <Button.ToolTip>
+                            <ToolTip Content="Browse Files"/>
+                        </Button.ToolTip>
+                    </Button>
+
+                    <Separator Background="{StaticResource AREghZyBrush.Foreground.Static}" Grid.Row="1" Grid.ColumnSpan="3"/>
+
+                    <Label Content="Folder Path:" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="2" Grid.Column="0"/>
+                    <TextBox x:Name="folderPathBox" VerticalAlignment="Center" Padding="0 2" IsReadOnly="True" Grid.Row="2" Grid.Column="1"/>
+                    <Button HorizontalAlignment="Right" VerticalAlignment="Center" Width="60" Height="60" Padding="10" Grid.Row="2" Grid.Column="2" Click="Browse_Click">
+                        <Button.Content>
+                            <Path Fill="White" Stretch="Uniform" Data="M928 256H544l-128-128H96C42.98 128 0 170.98 0 224v576c0 53.02 42.98 96 96 96h832c53.02 0 96-42.98 96-96V352c0-53.02-42.98-96-96-96z"/>
+                        </Button.Content>
+                        <Button.ToolTip>
+                            <ToolTip Content="Browse Folders"/>
+                        </Button.ToolTip>
+                    </Button>
+                    <Label x:Name="remainingLabel" Content="Remaining Files: " HorizontalAlignment="Left" Grid.Row="3" Grid.ColumnSpan="3"/>
+
+                    <Separator Background="{StaticResource AREghZyBrush.Foreground.Static}" Grid.Row="4" Grid.ColumnSpan="3"/>
+
+                    <Grid Grid.Row="5" Grid.ColumnSpan="3">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="160"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Content="File:" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0"/>
+                        <TextBox x:Name="fileNameTBox" IsEnabled="False" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1"/>
+
+                        <Label Content="Date:" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="1" Grid.Column="0"/>
+                        <TextBox x:Name="dateTBox" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1"/>
+
+                        <Label Content="Game Name:" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="2" Grid.Column="0"/>
+                        <TextBox x:Name="gameNameTBox" VerticalAlignment="Center" Grid.Row="2" Grid.Column="1"/>
+
+                        <Label Content="New Name:" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="3" Grid.Column="0"/>
+                        <TextBox x:Name="newFileNameTBox" VerticalAlignment="Center" Grid.Row="3" Grid.Column="1" PreviewTextInput="NewFileNameTBox_PreviewTextInput" CommandManager.PreviewCanExecute="PreviewCanExecute"/>
+
+                        <Label Content="Re-Encode:" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="4" Grid.Column="0"/>
+                        <CheckBox x:Name="cBox" IsChecked="True" HorizontalAlignment="Left" Grid.Row="4" Grid.Column="1"/>
+
+                        <Button x:Name="createButton" Content="Create" HorizontalAlignment="Center" Width="100" Height="60" Grid.Row="5" Grid.Column="1" Click="Create_Click" IsEnabled="False"/>
+                        <Button x:Name="nextButton" Content="Next File" HorizontalAlignment="Right" Width="150" Grid.RowSpan="6" Grid.Column="2" IsEnabled="False" Click="Next_Click"/>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <Grid x:Name="encodingProgressGrid" Visibility="Collapsed">
+                <Border Background="Black" Opacity="0.7"/>
+                <Border Background="{StaticResource Window.Static.Background}" Padding="10" VerticalAlignment="Center" CornerRadius="8" Margin="70" MaxWidth="1400" Height="200">
+                    <Grid>
+                        <TextBlock Text="Re-encoding Video - Please Wait" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="22"/>
+                        <TextBlock x:Name="frameCountBlock" Text="Frames: 0 / 0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20 60 0 0"/>
+                        <TextBlock x:Name="encodingPercentage" Text="0%" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="30" Margin="0 50 0 0"/>
+                        <ProgressBar x:Name="encodingProgress" Margin="20 100 30 20" VerticalAlignment="Top" Height="30" Value="0"/>
+                    </Grid>
+                </Border>
+            </Grid>
+            
+        </Grid>
+
+        
+        
+        <Slider x:Name="testSlider" Background="Red" Width="400" HorizontalAlignment="Center" VerticalAlignment="Center" Minimum="0" Maximum="100" Value="60" SelectionStart="20" SelectionEnd="80" IsSelectionRangeEnabled="True"/>
+        
+        <!--
+        <Track x:Name="trackF" Width="500" HorizontalAlignment="Center" Margin="0 0 0 200" VerticalAlignment="Center"/>
+        -->
+
+
+        <!--
+        <Slider x:Name="CustomSlider" VerticalAlignment="Bottom" Minimum="0" Maximum="1000" Value="500" IsSelectionRangeEnabled="True" SelectionStart="100" SelectionEnd="800" Loaded="CustomSliderControl_Loaded">
+            <Slider.Template>
+                <ControlTemplate TargetType="{x:Type Slider}">
+                    <Canvas Width="500" Height="200" Background="Red">
+                        <Border x:Name="TrackBackground" Background="{StaticResource SliderThumb.Track.Background}" BorderBrush="{StaticResource SliderThumb.Track.Border}" BorderThickness="1" Height="4.0" Margin="5 0 5 0" Grid.Row="1" VerticalAlignment="Center">
+                            <Canvas Margin="-6,-1">
+                                <Rectangle x:Name="PART_SelectionRange" Fill="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" Height="4.0" Visibility="Hidden"/>
+                            </Canvas>
+                        </Border>
+
+                        <Track x:Name="PART_Track">
+                            <Track.DecreaseRepeatButton>
+                                <RepeatButton Command="Slider.DecreaseLarge" Style="{StaticResource RepeatButtonTransparent}"/>
+                            </Track.DecreaseRepeatButton>
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton Command="Slider.IncreaseLarge" Style="{StaticResource RepeatButtonTransparent}"/>
+                            </Track.IncreaseRepeatButton>
+                            <Track.Thumb>
+                                <Thumb Width="30" Height="90" />
+                            </Track.Thumb>
+                        </Track>
+
+
+                        <Thumb x:Name="PART_StartThumb" Width="20" Height="50" DragDelta="StartThumb_DragDelta" HorizontalAlignment="Left" Canvas.Left="0"/>
+                        <Thumb x:Name="PART_EndThumb" Width="20" Height="50" DragDelta="EndThumb_DragDelta" HorizontalAlignment="Right" Canvas.Right="{Binding ActualWidth, ElementName=PART_Track}"/>
+                    </Canvas>
+                </ControlTemplate>
+            </Slider.Template>
+        </Slider>
+        -->
+
+
+    </Grid>
+
+</Window>
