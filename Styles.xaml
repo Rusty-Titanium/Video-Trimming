@@ -966,17 +966,15 @@
                 <TickBar x:Name="TopTick" Fill="{TemplateBinding Foreground}" Height="4" Margin="0,0,0,2" Placement="Top" Grid.Row="0" Visibility="Collapsed"/>
                 <TickBar x:Name="BottomTick" Fill="{TemplateBinding Foreground}" Height="4" Margin="0,2,0,0" Placement="Bottom" Grid.Row="2" Visibility="Collapsed"/>
 
-                <!-- Changing the height of this allows the thumb to be clicked elsewhere -->
-                <Border x:Name="TrackBackground" Background="{StaticResource SliderThumb.Track.Background}" BorderBrush="{StaticResource SliderThumb.Track.Border}" BorderThickness="1" Height="4.0" Margin="5 0 5 0" Grid.Row="1" VerticalAlignment="Center">
-                    <Canvas Margin="-6,-1">
-                        <Rectangle x:Name="PART_SelectionRange" Fill="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" Height="4.0" Visibility="Hidden"/>
+                <!-- Experimental Code -->
+                <!-- I've set the margins to 20 from 5 so that the thumbs can be moved all the way to one side. -->
+                <Border x:Name="TrackBackground" Background="{StaticResource SliderThumb.Track.Background}" BorderBrush="{StaticResource SliderThumb.Track.Border}" BorderThickness="1" Height="4.0" Margin="20 0" Grid.Row="1" VerticalAlignment="Center">
+                    <Canvas Margin="-1 -1">
+                        <Rectangle x:Name="PART_CustomSelectionRange" Fill="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" Height="4.0" Visibility="Hidden"/>
                     </Canvas>
                 </Border>
 
-                
-
-                <!-- closest working idea -->
-                <Track x:Name="PART_Track" Grid.Row="1" VerticalAlignment="Bottom" Height="50" Margin="0 -30 0 0">
+                <Track x:Name="PART_Track" Grid.Row="1" Margin="10 -33 10 0">
                     <Track.DecreaseRepeatButton>
                         <RepeatButton Command="{x:Static Slider.DecreaseLarge}" Style="{StaticResource RepeatButtonTransparent}"/>
                     </Track.DecreaseRepeatButton>
@@ -984,38 +982,30 @@
                         <RepeatButton Command="{x:Static Slider.IncreaseLarge}" Style="{StaticResource RepeatButtonTransparent}"/>
                     </Track.IncreaseRepeatButton>
                     <Track.Thumb>
-                        <Thumb x:Name="Thumb" Focusable="False" OverridesDefaultStyle="True" Template="{StaticResource SliderThumbHorizontalDefault}" VerticalAlignment="Center"/>
+                        <Thumb x:Name="Thumb" Focusable="False" OverridesDefaultStyle="True" Template="{StaticResource SliderThumbHorizontalDefault}" DragStarted="Thumb_DragStarted" VerticalAlignment="Center"/>
                     </Track.Thumb>
                 </Track>
 
-
-                <Track x:Name="PART_LeftTrack" Loaded="PART_LeftTrack_Loaded" Grid.Row="1" VerticalAlignment="Bottom" Height="50" Margin="0 -30 0 0">
+                <Track x:Name="PART_LeftTrack" Grid.Row="1" Margin="0 0 20 0">
                     <Track.Thumb>
-                        <Thumb x:Name="LeftThumb" Focusable="False" OverridesDefaultStyle="True" Template="{StaticResource NoBarSliderThumbHorizontalDefault}" DragDelta="LeftThumb_DragDelta" VerticalAlignment="Center"/>
+                        <Thumb x:Name="LeftThumb" Focusable="False" OverridesDefaultStyle="True" Template="{StaticResource NoBarSliderThumbHorizontalDefault}" DragStarted="Thumb_DragStarted" VerticalAlignment="Center"/>
                     </Track.Thumb>
                 </Track>
 
-                <Track x:Name="PART_RightTrack" Loaded="PART_RightTrack_Loaded" Grid.Row="1" VerticalAlignment="Bottom" Height="50" Margin="0 -30 0 0">
+                <Track x:Name="PART_RightTrack" Grid.Row="1" Margin="20 0 0 0">
                     <Track.Thumb>
-                        <Thumb x:Name="RightThumb" Focusable="False" OverridesDefaultStyle="True" Template="{StaticResource NoBarSliderThumbHorizontalDefault}" DragDelta="RightThumb_DragDelta" VerticalAlignment="Center"/>
+                        <Thumb x:Name="RightThumb" Focusable="False" OverridesDefaultStyle="True" Template="{StaticResource NoBarSliderThumbHorizontalDefault}" Thumb.DragStarted="Thumb_DragStarted" VerticalAlignment="Center"/>
                     </Track.Thumb>
                 </Track>
                 
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
+
+
                 <!-- original ->
-                This track didn't have Height, VerticalAlignment, or Margin here at all.
+                <Border x:Name="TrackBackground" Background="{StaticResource SliderThumb.Track.Background}" BorderBrush="{StaticResource SliderThumb.Track.Border}" BorderThickness="1" Height="4.0" Margin="5 0 5 0" Grid.Row="1" VerticalAlignment="Center">
+                    <Canvas Margin="-6,-1">
+                        <Rectangle x:Name="PART_SelectionRange" Fill="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" Height="4.0" Visibility="Hidden"/>
+                    </Canvas>
+                </Border>
                 <Track x:Name="PART_Track" Grid.Row="1" VerticalAlignment="Bottom" Height="50" Margin="0 -30 0 0">
                     <Track.DecreaseRepeatButton>
                         <RepeatButton Command="{x:Static Slider.DecreaseLarge}" Style="{StaticResource RepeatButtonTransparent}"/>
@@ -1033,29 +1023,36 @@
             </Grid>
         </Border>
         <ControlTemplate.Triggers>
-            
-            
             <Trigger Property="TickPlacement" Value="TopLeft">
                 <Setter Property="Visibility" TargetName="TopTick" Value="Visible"/>
                 <Setter Property="Template" TargetName="Thumb" Value="{StaticResource SliderThumbHorizontalTop}"/>
-                <Setter Property="Margin" TargetName="TrackBackground" Value="5,2,5,0"/>
+                <Setter Property="Margin" TargetName="TrackBackground" Value="20,2,20,0"/>
             </Trigger>
             <Trigger Property="TickPlacement" Value="BottomRight">
                 <Setter Property="Visibility" TargetName="BottomTick" Value="Visible"/>
                 <Setter Property="Template" TargetName="Thumb" Value="{StaticResource SliderThumbHorizontalBottom}"/>
-                <Setter Property="Margin" TargetName="TrackBackground" Value="5,0,5,2"/>
+                <Setter Property="Margin" TargetName="TrackBackground" Value="20,0,20,2"/>
             </Trigger>
             <Trigger Property="TickPlacement" Value="Both">
                 <Setter Property="Visibility" TargetName="TopTick" Value="Visible"/>
                 <Setter Property="Visibility" TargetName="BottomTick" Value="Visible"/>
             </Trigger>
+            <!-- Experimental code -->
+            <Trigger Property="IsSelectionRangeEnabled" Value="true">
+                <Setter Property="Visibility" TargetName="PART_CustomSelectionRange" Value="Visible"/>
+            </Trigger>
+            
+            
+            <!-- original code ->
             <Trigger Property="IsSelectionRangeEnabled" Value="true">
                 <Setter Property="Visibility" TargetName="PART_SelectionRange" Value="Visible"/>
             </Trigger>
+            -->
+            
             <Trigger Property="IsKeyboardFocused" Value="true">
                 <Setter Property="Foreground" TargetName="Thumb" Value="Blue"/>
             </Trigger>
-            
+
             
             
         </ControlTemplate.Triggers>
@@ -1201,6 +1198,8 @@
 
     <!-- this is what the Main Slider uses -->
     <Style TargetType="{x:Type Slider}">
+        <EventSetter Event="Loaded" Handler="Slider_Loaded"/>
+        <EventSetter Event="SizeChanged" Handler="Slider_SizeChanged"/>
         <Setter Property="Stylus.IsPressAndHoldEnabled" Value="false"/>
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
@@ -1211,6 +1210,7 @@
                 <Setter Property="Template" Value="{StaticResource SliderVertical}"/>
             </Trigger>
         </Style.Triggers>
+        
     </Style>
 
 
@@ -1221,7 +1221,7 @@
 
     <!-- This was moved down just so that I can more easily find and edit it if I needed to. -->
 
-    <!-- This Control Template was edited so that only the thumb was visible and that the rest of the slider is both invisible and not clickable, meaning that anything underneath is clickable. -->
+    <!-- This slider is the normal slider. I should probably name the fancy one instead of making that the default. -->
     
     <ControlTemplate x:Key="NormalSliderHorizontal" TargetType="{x:Type Slider}">
 
@@ -1280,62 +1280,6 @@
     
     
     
-    <!--
-    <ControlTemplate x:Key="NormalSliderHorizontal" TargetType="{x:Type Slider}">
-        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="True">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <TickBar x:Name="TopTick" Fill="{TemplateBinding Foreground}" Height="4" Margin="0,0,0,2" Placement="Top" Grid.Row="0" Visibility="Collapsed"/>
-                <TickBar x:Name="BottomTick" Fill="{TemplateBinding Foreground}" Height="4" Margin="0,2,0,0" Placement="Bottom" Grid.Row="2" Visibility="Collapsed"/>
-
-                <!- Changing the height of this allows the thumb to be clicked elsewhere ->
-                <Border x:Name="TrackBackground" Background="{StaticResource SliderThumb.Track.Background}" BorderBrush="{StaticResource SliderThumb.Track.Border}" BorderThickness="1" Height="4.0" Margin="5 0 5 0" Grid.Row="1" VerticalAlignment="Center">
-                    <Canvas Margin="-6,-1">
-                        <Rectangle x:Name="PART_SelectionRange" Fill="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" Height="4.0" Visibility="Hidden"/>
-                    </Canvas>
-                </Border>
-                <!- This track didn't have Height, VerticalAlignment, or Margin here at all. Also original height before 2nd editing is 50 ->
-                <Track x:Name="PART_Track" Grid.Row="1" VerticalAlignment="Bottom" Height="50" Margin="0 -30 0 0">
-                    <Track.DecreaseRepeatButton>
-                        <RepeatButton Command="{x:Static Slider.DecreaseLarge}" Style="{StaticResource RepeatButtonTransparent}"/>
-                    </Track.DecreaseRepeatButton>
-                    <Track.IncreaseRepeatButton>
-                        <RepeatButton Command="{x:Static Slider.IncreaseLarge}" Style="{StaticResource RepeatButtonTransparent}"/>
-                    </Track.IncreaseRepeatButton>
-                    <Track.Thumb>
-                        <Thumb x:Name="Thumb" Focusable="False" OverridesDefaultStyle="True" Template="{StaticResource SliderThumbHorizontalDefault}" VerticalAlignment="Center"/>
-                    </Track.Thumb>
-                </Track>
-            </Grid>
-        </Border>
-        <ControlTemplate.Triggers>
-            <Trigger Property="TickPlacement" Value="TopLeft">
-                <Setter Property="Visibility" TargetName="TopTick" Value="Visible"/>
-                <Setter Property="Template" TargetName="Thumb" Value="{StaticResource SliderThumbHorizontalTop}"/>
-                <Setter Property="Margin" TargetName="TrackBackground" Value="5,2,5,0"/>
-            </Trigger>
-            <Trigger Property="TickPlacement" Value="BottomRight">
-                <Setter Property="Visibility" TargetName="BottomTick" Value="Visible"/>
-                <Setter Property="Template" TargetName="Thumb" Value="{StaticResource SliderThumbHorizontalBottom}"/>
-                <Setter Property="Margin" TargetName="TrackBackground" Value="5,0,5,2"/>
-            </Trigger>
-            <Trigger Property="TickPlacement" Value="Both">
-                <Setter Property="Visibility" TargetName="TopTick" Value="Visible"/>
-                <Setter Property="Visibility" TargetName="BottomTick" Value="Visible"/>
-            </Trigger>
-            <Trigger Property="IsSelectionRangeEnabled" Value="true">
-                <Setter Property="Visibility" TargetName="PART_SelectionRange" Value="Visible"/>
-            </Trigger>
-            <Trigger Property="IsKeyboardFocused" Value="true">
-                <Setter Property="Foreground" TargetName="Thumb" Value="Blue"/>
-            </Trigger>
-        </ControlTemplate.Triggers>
-    </ControlTemplate>
-    -->
 
     <!-- This is a normal Restyle -->
     <Style x:Key="NormalThumbSlider" TargetType="{x:Type Slider}">

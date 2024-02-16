@@ -8,10 +8,7 @@
         Title="Video Trimming" MinHeight="680" Height="580" MinWidth="800" Width="800" FontSize="18" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded" PreviewKeyDown="Window_PreviewKeyDown">
 
     <Window.Resources>
-
-        <!-- The SVG paths were really messed up and I couldn't get proper spacing between them evenly so I did the next best thing that should work. 
-        Dumb solution but idc enough to waste more time trying to figure out a proper way to do it.-->
-
+        
         <Grid x:Key="volumePath" Margin="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width=".6*"/>
@@ -206,10 +203,10 @@
                         <TextBox x:Name="fileNameTBox" IsEnabled="False" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1"/>
 
                         <Label Content="Date:" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="1" Grid.Column="0"/>
-                        <TextBox x:Name="dateTBox" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1"/>
+                        <TextBox x:Name="dateTBox" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" PreviewTextInput="NewFileNameTBox_PreviewTextInput" CommandManager.PreviewCanExecute="PreviewCanExecute"/>
 
                         <Label Content="Game Name:" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="2" Grid.Column="0"/>
-                        <TextBox x:Name="gameNameTBox" VerticalAlignment="Center" Grid.Row="2" Grid.Column="1"/>
+                        <TextBox x:Name="gameNameTBox" VerticalAlignment="Center" Grid.Row="2" Grid.Column="1" PreviewTextInput="NewFileNameTBox_PreviewTextInput" CommandManager.PreviewCanExecute="PreviewCanExecute"/>
 
                         <Label Content="New Name:" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="3" Grid.Column="0"/>
                         <TextBox x:Name="newFileNameTBox" VerticalAlignment="Center" Grid.Row="3" Grid.Column="1" PreviewTextInput="NewFileNameTBox_PreviewTextInput" CommandManager.PreviewCanExecute="PreviewCanExecute"/>
@@ -237,47 +234,16 @@
             
         </Grid>
 
+
+        <!-- this version allows for side changing -->
+        <Slider x:Name="testSlider" Background="Red" Margin="100 0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Minimum="0" Maximum="1000" Value="600" SelectionStart="200" SelectionEnd="1000" IsSelectionRangeEnabled="True"/>
         
-        
-        <Slider x:Name="testSlider" Background="Green" Width="400" HorizontalAlignment="Center" VerticalAlignment="Center" Minimum="0" Maximum="100" Value="60" SelectionStart="20" SelectionEnd="80" IsSelectionRangeEnabled="True"/>
         
         <!--
-        <Track x:Name="trackF" Width="500" HorizontalAlignment="Center" Margin="0 0 0 200" VerticalAlignment="Center"/>
+        <Slider x:Name="testSlider" Background="Red" Width="400" HorizontalAlignment="Center" VerticalAlignment="Center" Minimum="0" Maximum="1000" Value="600" SelectionStart="200" SelectionEnd="1000" IsSelectionRangeEnabled="True"/>
         -->
-
-
-        <!--
-        <Slider x:Name="CustomSlider" VerticalAlignment="Bottom" Minimum="0" Maximum="1000" Value="500" IsSelectionRangeEnabled="True" SelectionStart="100" SelectionEnd="800" Loaded="CustomSliderControl_Loaded">
-            <Slider.Template>
-                <ControlTemplate TargetType="{x:Type Slider}">
-                    <Canvas Width="500" Height="200" Background="Red">
-                        <Border x:Name="TrackBackground" Background="{StaticResource SliderThumb.Track.Background}" BorderBrush="{StaticResource SliderThumb.Track.Border}" BorderThickness="1" Height="4.0" Margin="5 0 5 0" Grid.Row="1" VerticalAlignment="Center">
-                            <Canvas Margin="-6,-1">
-                                <Rectangle x:Name="PART_SelectionRange" Fill="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" Height="4.0" Visibility="Hidden"/>
-                            </Canvas>
-                        </Border>
-
-                        <Track x:Name="PART_Track">
-                            <Track.DecreaseRepeatButton>
-                                <RepeatButton Command="Slider.DecreaseLarge" Style="{StaticResource RepeatButtonTransparent}"/>
-                            </Track.DecreaseRepeatButton>
-                            <Track.IncreaseRepeatButton>
-                                <RepeatButton Command="Slider.IncreaseLarge" Style="{StaticResource RepeatButtonTransparent}"/>
-                            </Track.IncreaseRepeatButton>
-                            <Track.Thumb>
-                                <Thumb Width="30" Height="90" />
-                            </Track.Thumb>
-                        </Track>
-
-
-                        <Thumb x:Name="PART_StartThumb" Width="20" Height="50" DragDelta="StartThumb_DragDelta" HorizontalAlignment="Left" Canvas.Left="0"/>
-                        <Thumb x:Name="PART_EndThumb" Width="20" Height="50" DragDelta="EndThumb_DragDelta" HorizontalAlignment="Right" Canvas.Right="{Binding ActualWidth, ElementName=PART_Track}"/>
-                    </Canvas>
-                </ControlTemplate>
-            </Slider.Template>
-        </Slider>
-        -->
-
+        
+        
 
     </Grid>
 

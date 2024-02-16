@@ -59,8 +59,6 @@ namespace Video_Trimming
          *      I would still have this issue regardless. tl;dr I don't want to spend days trying to do that at this point when this project should of been completed in 3-4 days, not a week.
          * 
          * Stuff to fix:
-         * - Bug - Noticed that if you click just left or right of the stem of the mainSlider thumb, it doesn't move it or have anyway to interact. I guess the way I built it doesn't allow it to
-         *              click past whatever invisible thingy that is there. If you find some time please fix this.
          * - Bug - seems like we are getting jumping at the end of the video. I presume this is because the video is running a small portion of the last 100 ms that I conveniently leave out, causing
          *              what looks like a bad stutter. I think this is due to setting the mainSlider.Value to an int and depending on the value it may make it move a pixel which causes the funkiness.
          * - Bug not really but - there is no message for when creating a video without re-encoding. I might want to add SOMETHING just to tell the user that something is happening, instead of nothing.
@@ -247,7 +245,7 @@ namespace Video_Trimming
         /// <summary>
         /// This method will get the next file path, delete it from the list, then use it to then start a new video.
         /// </summary>
-        private async void Next_File()
+        private void Next_File()
         {
             currentFilePath = listOfPaths[0];
             listOfPaths.RemoveAt(0);
@@ -451,18 +449,6 @@ namespace Video_Trimming
         private void Next_Click(object sender, RoutedEventArgs e)
         {
             Next_File();
-        }
-
-
-        private static readonly Regex _regex = new Regex("[^0-9]+"); // regex that disallows anything that isn't a numeral
-        /// <summary>
-        /// This Event handler checks and denies any character that isn't a number
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            e.Handled = _regex.IsMatch(e.Text);
         }
 
 
@@ -683,7 +669,7 @@ namespace Video_Trimming
 
 
         // currently for testing, but might need
-        private async void MainWindow_MouseMove(object sender, MouseEventArgs e)
+        private void MainWindow_MouseMove(object sender, MouseEventArgs e)
         {
             // the mouse pointer check is for when you are holding the thumb, but not moving the mouse. for some reason this event fires when hovering over the slider with the mouse, so this is to stop unnecessary values being set.
             if (thumb.IsMouseCaptured && canRun && lastMousePoint.X != e.GetPosition(this).X) // true if mouse is captured on the drag
@@ -997,76 +983,6 @@ namespace Video_Trimming
             Set_Media_Position((int)mainSlider.SelectionEnd);
             
         }
-
-
-
-
-
-
-
-
-        // everything past this point is AI crap that I'm testing.
-
-        /**
-        private Thumb startThumb;
-        private Thumb endThumb;
-        private Track track;
-
-
-
-
-        private void CustomSliderControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            // Get the thumbs after the control has loaded
-            startThumb = CustomSlider.Template.FindName("PART_StartThumb", CustomSlider) as Thumb;
-            endThumb = CustomSlider.Template.FindName("PART_EndThumb", CustomSlider) as Thumb;
-            track = CustomSlider.Template.FindName("PART_Track", CustomSlider) as Track;
-        }
-
-        // Event handler for the start thumb's drag operation
-        private void StartThumb_DragDelta(object sender, DragDeltaEventArgs e)
-        {
-            double newSelectionStart = CustomSlider.SelectionStart + e.HorizontalChange;
-            newSelectionStart = ClampValue(newSelectionStart, CustomSlider.Minimum, CustomSlider.SelectionEnd);
-            CustomSlider.SelectionStart = newSelectionStart;
-
-            // Update the position of the start thumb
-            UpdateThumbPosition(startThumb, newSelectionStart);
-        }
-
-        // Event handler for the end thumb's drag operation
-        private void EndThumb_DragDelta(object sender, DragDeltaEventArgs e)
-        {
-            double newSelectionEnd = CustomSlider.SelectionEnd + e.HorizontalChange;
-            newSelectionEnd = ClampValue(newSelectionEnd, CustomSlider.SelectionStart, CustomSlider.Maximum);
-            CustomSlider.SelectionEnd = newSelectionEnd;
-
-            // Update the position of the end thumb
-            UpdateThumbPosition(endThumb, newSelectionEnd);
-        }
-
-        // Helper method to update the position of a thumb
-        private void UpdateThumbPosition(Thumb thumb, double value)
-        {
-            double trackWidth = track.ActualWidth;
-
-            Debug.WriteLine(trackWidth);
-
-            double thumbPosition = (value - CustomSlider.Minimum) / (CustomSlider.Maximum - CustomSlider.Minimum) * trackWidth;
-
-            // Set the Canvas.Left property of the thumb
-            
-            Canvas.SetLeft(thumb, thumbPosition);
-        }
-
-        // Helper method to clamp a value within a specified range
-        private double ClampValue(double value, double minValue, double maxValue)
-        {
-            return Math.Max(minValue, Math.Min(maxValue, value));
-        }
-         */
-
-
 
 
 
